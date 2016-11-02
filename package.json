@@ -1,0 +1,16 @@
+{
+  "name": "my-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "~4.0.0",
+    "mongoose": "^4.5.8",
+    "request": "^2.76.0"
+  }
+}
