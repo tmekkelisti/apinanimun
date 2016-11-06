@@ -3,6 +3,9 @@
 Simple API that fetches IMGURs most viral images metadata and saves them to database. 
 It also serves a React Client with search and results as images.
 
+HEROKU:
+http://apinanimun.herokuapp.com/
+
 ENDPOINTS:
 * /api/images - shows all image metadata in JSON
 * /api/fetch - updates the database
