@@ -64,7 +64,7 @@
 
         fetch: function() {
         var q = ReactDOM.findDOMNode(this.refs.q).value;
-        var url = 'http://localhost:8080/api/search?q=' + q;
+        var url = 'https://apinanimun.herokuapp.com/api/search?q=' + q;
         this.props.search(url);
         }
 
