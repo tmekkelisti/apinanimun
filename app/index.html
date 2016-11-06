@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+  apinanimun api client
+</title>
+</head>
+  <body>
+    <div id="content"></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://fb.me/react-0.14.6.js"></script>
+    <script src="https://fb.me/react-dom-0.14.6.js"></script>
+    <script src="http://fb.me/JSXTransformer-0.12.1.js"></script>
+
+    <script type="text/jsx">
+
+      var App = React.createClass({
+
+        getInitialState: function() {
+          return {
+            results: [],
+          }
+        },
+
+        setResults: function(res) {
+          this.setState({
+            results: res,
+          })
+        },
+
+        search: function(url) {
+          $.ajax({
+            type: "GET",
+            url: url,
+            success: function(res) {
+              this.setResults(res);
+            }.bind(this)
+          });
+        },
+
+        render: function() {
+        console.log(this.state);
+          return (
+            <div>
+              <h1>Apinanimun APIn Client</h1>
+              <Search search={this.search} />
+              <Results results={this.state.results} />
+            </div>
+          );
+        },
+
+      });
+
+      var Search = React.createClass({
+
+        render: function() {
+          return (
+            <div>
+              <input type="text" ref="q" />
+              <input type="submit" onClick={this.fetch} />
+            </div>
+          );
+        },
+
+        fetch: function() {
+        var q = ReactDOM.findDOMNode(this.refs.q).value;
+        var url = 'http://localhost:8080/api/search?q=' + q;
+        this.props.search(url);
+        }
+
+      });
+
+      var Results = React.createClass({
+
+        render: function() {
+          if (this.props.results.length === 0) {
+            return(
+              <p>nothing to see</p>
+            );
+          }
+          var items = this.props.results.map(function(result) {
+            return <ResultItem key={result.id} img={result} />
+          });
+          return(
+            <div>
+              <p>{this.props.results.length} images found</p>
+              <ul>
+                {items}
+              </ul>
+            </div>
+          );
+        }
+      });
+
+      var ResultItem = React.createClass({
+
+        render: function(){
+
+          function image_url(image) {
+            var imgz;
+            if(image.is_album){
+              imgz = image.images.map(function(single_img) {
+                return <ItemImage key={single_img.id} url={single_img.link} />
+              });
+            } else {
+              imgz = function(){
+                return <ItemImage key={image.id} url={image.link} />
+              }();
+            }
+            return imgz;
+          }
+
+          return(
+          <div>
+            <li>{this.props.img.title}</li>
+            {image_url(this.props.img)}
+          </div>
+          );
+        }
+      });
+
+      var ItemImage = React.createClass({
+        render: function(){
+          return(
+            <div>
+              <img src={this.props.url} />
+            </div>
+          );
+        }
+      });
+
+
+      ReactDOM.render(<App />,  document.getElementById("content"));
+
+    </script>
+  </body>
+</html>

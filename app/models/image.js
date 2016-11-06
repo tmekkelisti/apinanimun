@@ -24,8 +24,11 @@ var ImageSchema = new Schema({
   favorite: Boolean,
   nsfw: Boolean,
   vote: String,
-  in_gallery: Boolean
-});
+  in_gallery: Boolean,
+  is_album: Boolean
+},
+{ strict: false }
+);
 
 ImageSchema.index({ '$**': 'text' });
 

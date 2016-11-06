@@ -1,5 +1,10 @@
 var express = require('express');
 var app = express();
+var path = require('path');
+
+var mongoose = require('mongoose');
+mongoose.connect(process.env.MONGODB_URI);
+var Image = require('./app/models/image');
 
 var port = process.env.PORT || 8080;
 
@@ -45,10 +50,29 @@ router.get('/fetch', function(req, res) {
     var data = JSON.parse(body).data;
     for (var i = 0; i < data.length; i++) {
       var img = data[i];
-      var new_img = new Image(img);
-      new_img.save(function(err) {
-        if(err) throw err;
-      });
+
+      if (img.is_album) {
+        // if album, fetch album info
+        request({
+          url: 'https://api.imgur.com/3/album/' + img.id,
+          headers: {
+            'Authorization': process.env.IMGUR_ID
+          }
+        }, function(err, res, body) {
+          var album = JSON.parse(body).data;
+          var new_album = new Image(album);
+          new_album.is_album = true;
+          new_album.save(function(err) {
+            if(err) throw err;
+          });
+        });
+      } else {
+        // if image, save image
+        var new_img = new Image(img);
+        new_img.save(function(err) {
+          if(err) throw err;
+        });
+      }
     };
     console.log(i + ' images saved');
 
@@ -57,21 +81,12 @@ router.get('/fetch', function(req, res) {
   res.json({'message': 'Database updated'});
 });
 
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname + '/app/index.html'));
+});
+
 // Prefix /api
 app.use('/api', router);
 
 app.listen(port);
-console.log('APINANIMUN on port ' + port);
-
-// ========================================
-
-var mongoose = require('mongoose');
-
-mongoose.connect(process.env.MONGODB_URI);
-
-var Image = require('./app/models/image');
-
-
-// ========================================
-
-
+console.log('APINANIMUN API on port ' + port);
